@@ -1,0 +1,35 @@
+package nienth;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+
+public class Student implements Serializable{
+	int rollNumber;
+	String name;
+	Map<String,Integer> subjects;
+	Student(int rollNumber,String name){
+		this.rollNumber=rollNumber;
+		this.name=name;
+		this.subjects=new HashMap();
+	}
+//	Adds a subject and its marks.
+public void addSubject(String subject,int marks) {
+	subjects.put(subject, marks);
+		
+	}
+	
+
+public void displayStudentDetails() {
+	System.out.println("rollno: "+rollNumber);
+	System.out.println("Name is:"+name);
+	System.out.println("Marks and subjects are: "+subjects);
+}
+public String toString() {
+	return rollNumber+" "+name+" "+subjects;
+}
+}
+
+
