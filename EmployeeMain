@@ -1,0 +1,69 @@
+package eleventh;
+
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class EmpApp extends Employee {
+	EmpApp(int id, String name, int age, double salary) {
+		super(id, name, age, salary);
+	
+	}
+
+	public static void main(String[] args) throws IOException, ClassNotFoundException, SQLException {
+		// TODO Auto-generated method stub
+		Scanner sc=new Scanner(System.in);
+		ArrayList<Employee> al=new ArrayList<>();
+		EmpApp ep=new EmpApp(0," ",0,0);
+		System.out.println("Enter the choice which operation to be performed on employee");
+		System.out.println("1.Add an Employee");
+		System.out.println("2.Update employee salary");
+		System.out.println("3.Delete Employee Details");
+		System.out.println("4.Display all Employee Details");
+		System.out.println("5.Display Employee Details by id");
+		System.out.println("6.Saving data to file");
+		System.out.println("7.loading data from file");
+		System.out.println("8.Storing all the details of employee from arraylist to table in the database");
+		System.out.println("9.Exit");
+		int choice=sc.nextInt();
+		switch(choice) {
+		case 1:
+			ep.addEmployee(al);
+			break;
+		case 2:
+			ep.updateSalary(al);
+			break;
+		case 3:
+			ep.deleteEmployee(al);
+			break;
+		case 4:
+			ep.displayAllDetails(al);
+			break;
+		case 5:
+			ep.displayEmployeeById(al);
+			break;
+		case 6:
+			ep.saveToFile(al);
+			break;
+		case 7:
+			ep.loadFromFile(al);
+			break;
+		case 8:
+			ep.storeDataToTable(al);
+			break;
+		case 9:
+			ep.exit();
+			break;
+		default:
+			System.out.println("enter the proper choice from 1-9");
+		
+		
+		}
+		
+		
+		
+
+	}
+
+}
