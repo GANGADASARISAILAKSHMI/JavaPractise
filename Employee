@@ -1,0 +1,196 @@
+package eleventh;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.InputMismatchException;
+import java.util.Iterator;
+import java.util.Scanner;
+public class Employee implements Serializable {
+int id;
+String name;
+int age;
+double salary;
+static Scanner sc=new Scanner(System.in);
+Employee(int id,String name,int age,double salary){
+	this.id=id;
+	this.name=name;
+	this.age=age;
+	this.salary=salary;
+}
+
+public void addEmployee(ArrayList<Employee> al) {
+try {
+    System.out.println("Enter the number of employees to be stored:");
+    int size = sc.nextInt();
+    for (int i = 0; i < size; i++) {
+        System.out.println("Enter the id:");
+        int id = sc.nextInt();
+        sc.nextLine();
+        System.out.println("Enter the name:");
+        String name = sc.nextLine();
+        int age = 0;
+        boolean validAge = false;
+        while (!validAge) {
+            System.out.println("Enter the age:");
+            age = sc.nextInt();
+            if (age <= 0) {
+                System.out.println("Age must be positive:");
+            } else {
+                validAge = true;
+            }
+        }
+        double salary = 0;
+        boolean validSalary = false;
+        while (!validSalary) {
+            System.out.println("Enter the salary:");
+            salary = sc.nextDouble();
+            if (salary <= 0) {
+                System.out.println("Salary should be greater than 0");
+            } else {
+                validSalary = true;
+            }
+        }
+        al.add(new Employee(id, name, age, salary));
+    }
+
+} catch (InputMismatchException e) {
+    System.out.println("Invalid input");
+}
+}
+
+public String toString() {
+	return"Employee id is: "+id+ " Employee name is: "+name+" Employee age is: "+age+" Employee salary is: "+salary;
+
+}
+public void displayAllDetails(ArrayList<Employee> al) {
+	System.out.println("The employee details are:");
+	for(Employee e:al) {
+		System.out.println(e.toString());
+	}
+	
+}
+
+public void deleteEmployee(ArrayList<Employee> al) {
+	boolean found=false;
+	System.out.println("Enter the id of employee in order to delete:");
+	int delete_id=sc.nextInt();
+	Iterator<Employee> it=al.iterator();
+	while(it.hasNext()) {
+		Employee e=it.next();
+		if(e.id==delete_id) {
+			it.remove();
+			System.out.println("Employee with the id provided is deleted");
+			found=true;
+			break;
+		}
+	}
+	if(!found) {
+		System.out.println("employee with specified name is not found in order to delete");
+	}
+	
+}
+public void displayEmployeeById(ArrayList<Employee> al) {
+	System.out.println("Enter the id of the employee whose details want to display");
+	int display_id=sc.nextInt();
+    boolean found = false;
+    for (Employee e : al) {
+        if (e.id == display_id) {
+            System.out.println("Employee found: ");
+            System.out.println(e.toString());
+            found = true;
+            break;
+        }
+    }
+    if (!found) {
+        System.out.println("Employee with ID " + id + " not found");
+    }
+}
+
+public void updateSalary(ArrayList<Employee> al){
+	boolean found=false;
+	System.out.println("Enter the id of employee to whom you want to update the salary:");
+	int update_id=sc.nextInt();
+	System.out.println("Enter how much salary want to update:");
+	double salary=sc.nextDouble();
+	for(Employee e:al) {
+		if(e.id==update_id) {
+			e.salary+=salary;
+			System.out.println("The salary updated to the employee "+ e.name+" "+"and the updated salary is: "+e.salary);
+			found=true;
+			break;
+		}
+			
+		}
+	if(!found) {
+		System.out.println("The employee with "+update_id +"is not found in order to update the salary");
+	}
+}
+public void saveToFile(ArrayList<Employee> al) throws IOException {
+	FileOutputStream fo = new FileOutputStream("employee.txt");
+    ObjectOutputStream os = new ObjectOutputStream(fo);
+    os.writeObject(al);
+    System.out.println("Employee data saved to file");
+    os.close();
+    fo.close();
+}
+public void loadFromFile(ArrayList<Employee> al) throws IOException, ClassNotFoundException {
+    File file = new File("employee.txt");
+    if (!file.exists()) {
+        System.out.println("File not found to fetch data");
+        return;
+    }
+    FileInputStream fi = new FileInputStream("employee.txt");
+    ObjectInputStream os = new ObjectInputStream(fi);
+    ArrayList<Employee> a = (ArrayList<Employee>)os.readObject();
+    os.close();
+    fi.close();
+    if (a.isEmpty()) {
+        System.out.println("No data present in the file to read");
+    } else {
+        System.out.println("The data present the file is:");
+        for (Employee e : a) {
+            System.out.println(e.toString());
+        }
+    }
+}
+public void storeDataToTable(ArrayList<Employee> al) throws SQLException {
+	try {
+		Class.forName("com.mysql.cj.jdbc.Driver");
+		String url="jdbc:mysql://localhost:3306/sai";
+		String username="root";
+		String password="Anjali@123";
+		Connection con=DriverManager.getConnection(url,username,password);
+		PreparedStatement ps = con.prepareStatement("INSERT INTO employee(no,name,age,salary) values(?,?,?,?)");
+        for (Employee e : al) { 
+        	ps.setInt(1, e.id);
+            ps.setString(2, e.name);
+            ps.setInt(3,e.age );
+            ps.setDouble(4, e.salary);
+            ps.executeUpdate();
+        }
+        ps.close();
+        con.close();
+        System.out.println("Data inserted to the table present in database");
+		
+	} catch (ClassNotFoundException e) {
+		
+		e.printStackTrace();
+	}
+}
+public void exit() {
+    System.out.println("Don't requir any actions exit");
+    sc.close();
+}
+
+
+}
